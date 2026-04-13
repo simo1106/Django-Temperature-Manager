@@ -6,44 +6,72 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="https://www.w3schools.com/w3css/5/w3.css">
     <title>Temperature History</title>
-
+    <style>
+        body {
+            background-color: #f4f4f4;
+        }
+    </style>
 </head>
 
 <body>
-<div class="w3-container">
-    <h1>Temperature History</h1>
-    {% if status %}
-    <p>Total data count: {{ data_count }}</p>
-    <table class="w3-table-all w3-card-4">
-        <thead>
-            <tr>
-                <th>ID</th>
-                <th>Sensor ID</th>
-                <th>Temperature</th>
-                <th>Humidity</th>
-                <th>Timestamp</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for item in resultList %}
-            <tr>
-                <td>{{ item.myid }}</td>
-                <td>{{ item.sensor_id }}</td>
-                <td>{{ item.temperature }}</td>
-                <td>{{ item.humidity }}</td>
-                <td>{{ item.timestamp }}</td>
-                <td>
-                <a href="/edit{{item.myid}}">編輯</a>
-                <a href="/edit{{item.myid}}">刪除</a>
-                </td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-    {% else %}
-    <p>{{ errormessage }}</p>
-    {% endif %}
-</div>
+    <div class="w3-content w3-margin-left:auto" style="max-width:60%;">
+
+        <div class="w3-card-4 w3-white w3-round-large">
+
+            <header class="w3-container w3-blue w3-round-large"
+                style="border-bottom-left-radius: 0; border-bottom-right-radius: 0;">
+                <h2>Temperature History</h2>
+            </header>
+
+            <div class="w3-container w3-padding-16">
+                {% if status %}
+                <p class="w3-text-grey">Total data count: <b>{{ data_count }}</b></p>
+
+                <div class="w3-responsive">
+                    <table class="w3-table w3-striped w3-bordered ">
+                        <thead>
+                            <tr class="w3-light-grey w3-text-blue">
+                                <th>ID</th>
+                                <th>Sensor ID</th>
+                                <th>Temp</th>
+                                <th>Humid</th>
+                                <th>Timestamp</th>
+                                <th class="w3-center">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for item in resultList %}
+                            <tr>
+                                <td>{{ item.myid }}</td>
+                                <td>{{ item.sensor_id }}</td>
+                                <td>{{ item.temperature }}°C</td>
+                                <td>{{ item.humidity }}%</td>
+                                <td>{{ item.timestamp }}</td>
+                                <td class="w3-center">
+                                    <a href="/edit{{item.myid}}"
+                                        class="w3-button w3-blue w3-round-medium w3-small">編輯</a>
+                                    <a href="/delete{{item.myid}}"
+                                        class="w3-button w3-red w3-round-medium w3-small">刪除</a>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+
+                {% else %}
+                <div class="w3-panel w3-pale-red w3-leftbar w3-border-red">
+                    <p>{{ errormessage }}</p>
+                </div>
+                {% endif %}
+            </div>
+
+            <footer class="w3-container w3-light-grey w3-padding w3-round-large"
+                style="border-top-left-radius: 0; border-top-right-radius: 0;">
+                <p class="w3-small w3-right">Temperature Monitor v1.0</p>
+            </footer>
+        </div>
+    </div>
 </body>
 
 </html>
