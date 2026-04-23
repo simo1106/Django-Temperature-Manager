@@ -24,4 +24,10 @@ urlpatterns = [
     path('Temperature/', views.Temperature, name='Temperature'),
     path('delete/<int:id>/', views.delete, name='delete'),
     path('post/', views.post, name='post'),
+
+    # WEB API
+    path('API_Temperature/', views.API_Temperature, name='API_Temperature'),
+    path('API_post/<int:id>/', views.API_post, name='API_post'),
+    # path('createItem/', views.createItem, name='createItem'),
+    # path('updateItem/<int:id>/', views.updateItem, name='updateItem'),
 ]

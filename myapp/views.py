@@ -47,7 +47,6 @@ def post(request):
     else:
         return render(request, 'post.html')
     
-    
 def delete(request, id):
     print(id)
     # 成功
@@ -60,3 +59,25 @@ def delete(request, id):
         obj_data = temperature.objects.get(myid=id)
         print(model_to_dict(obj_data))
         return render(request, 'delete.html', {'obj_data': obj_data})
+
+# web API 加入Json格式
+from django.http import JsonResponse
+def API_Temperature(request):
+    All_data= temperature.objects.all().order_by('id')
+    list_data= list(All_data.values()) #將 querySet 轉為 list；物件變成字典
+    return JsonResponse(list_data, safe=True) # 與允許dict
+
+def API_post(request, id):
+    try:
+        obj= temperature.objects.get(myid = id)
+        # print(model_to_dict(obj))
+        list_data= model_to_dict(obj) # object 打包成 python字典 (key, value) 之後才能繼續打包Jsone純文字格式
+        return JsonResponse(list_data) #預設safe= False
+    except:
+        # return HttpResponse("False")
+        return JsonResponse("datas not found", status=404)
+
+
+
+
+
