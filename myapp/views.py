@@ -7,7 +7,7 @@ def homepage(request):
     return HttpResponse("Hello world!")
 
 def Temp(request):
-    resultList = temperature.objects.all().order_by('timestamp') # 時間戳擺在最上面
+    resultList = Temperature.objects.all().order_by('timestamp') # 時間戳擺在最上面
     # 搜尋功能
     search_keyword= request.GET.get('site_search')
     if search_keyword:
@@ -50,13 +50,13 @@ def post(request):
 def delete(request, id):
     print(id)
     # 成功
-    obj_data = temperature.objects.get(myid=id)
+    obj_data = Temperature.objects.get(myid=id)
     if request.method == 'POST':
         obj_data.delete()
         return redirect('Temp')
     # 失敗
     else:
-        obj_data = temperature.objects.get(myid=id)
+        obj_data = Temperature.objects.get(myid=id)
         print(model_to_dict(obj_data))
         return render(request, 'delete.html', {'obj_data': obj_data})
 
@@ -64,44 +64,46 @@ def delete(request, id):
 from django.http import JsonResponse
 @csrf_exempt
 def API_Temperature(request):
-    All_data= temperature.objects.all().order_by('myid')
-    list_dic_data= list(All_data.values()) #將 querySet 轉為 list；物件變成陣列字典
+    All_data= Temperature.objects.all().order_by('myid')
+    list_dic_data= list(All_data.values()) #將 querySet 轉為 list；物件變成陣列字典，之後才能繼續打包Jsone純文字格式當作API回傳
     return JsonResponse(list_dic_data, safe=False) # 與允許dict
 
-def API_Temperature_detail(request, id):
+def API_Temperature_GET(request):
     try:
-        obj= temperature.objects.get(myid=id)
-        # print(model_to_dict(obj))
-        list_dic_data= model_to_dict(obj) # object 打包成 陣列字典 (key, value) 之後才能繼續打包Jsone純文字格式當作API回傳
-        return JsonResponse(list_dic_data) #預設safe= False
+        if request.method == "GET":
+            myid = request.GET['myid']
+            sensor_id = request.GET['sensor_id']
+            temperature = request.GET['temperature']
+            humidity = request.GET['humidity']
+            timestamp = request.GET['timestamp']
+            print(f"Received GET data: myid={myid}, sensor_id={sensor_id}, temperature={temperature}, humidity={humidity}, timestamp={timestamp}")
     except:
-        # return HttpResponse("False")
         return JsonResponse({"message": "data not found"}, status=404)
+    return HttpResponse("這是API的GET方法")
 
 @csrf_exempt    
-def updateList(request, id):
-    print(f"id:{id}")
-    if request.method   != "POST":
+def updateList(request):
+    if request.method != "POST":
         return HttpResponse("這個 API 只接受 POST", status=404)
 
     try:
-        myid = request.POST.get('myid')
         sensor_id = request.POST.get('sensor_id')
         temperature = request.POST.get('temperature')
         humidity = request.POST.get('humidity')
         timestamp = request.POST.get('timestamp')
 
-        print(f"Received POST data: myid={myid}, sensor_id={sensor_id}, temperature={temperature}, humidity={humidity}, timestamp={timestamp}")
+        print(f"Received POST data: sensor_id={sensor_id}, temperature={temperature}, humidity={humidity}, timestamp={timestamp}")
 
-        temperature.objects.create(
-            myid=myid,
+        add = Temperature(
             sensor_id=sensor_id,
             temperature=temperature,
-            humidity=humidity,  
-            timestamp=timestamp
+            humidity=humidity
         )
+        add.save()
 
         return HttpResponse("資料已寫入資料庫")
 
     except Exception as e:
         return JsonResponse({"error": str(e)}, status=500)
+    
+    

@@ -1,6 +1,6 @@
 from django.db import models
 
-class temperature(models.Model):
+class Temperature(models.Model):
     #myid int
     #sensor_id int
     #temperature float
