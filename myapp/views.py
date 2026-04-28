@@ -1,11 +1,11 @@
 from django.shortcuts import render
 from django.http import HttpResponse
 from django.forms.models import model_to_dict
+from .models import *
 
 def homepage(request):
     return HttpResponse("Hello world!")
 
-from .models import temperature
 def Temp(request):
     resultList = temperature.objects.all().order_by('timestamp') # 時間戳擺在最上面
     # 搜尋功能
@@ -53,7 +53,7 @@ def delete(request, id):
     obj_data = temperature.objects.get(myid=id)
     if request.method == 'POST':
         obj_data.delete()
-        return redirect('Temperature')
+        return redirect('Temp')
     # 失敗
     else:
         obj_data = temperature.objects.get(myid=id)
@@ -65,15 +65,15 @@ from django.http import JsonResponse
 @csrf_exempt
 def API_Temperature(request):
     All_data= temperature.objects.all().order_by('myid')
-    list_data= list(All_data.values()) #將 querySet 轉為 list；物件變成字典
-    return JsonResponse(list_data, safe=False) # 與允許dict
+    list_dic_data= list(All_data.values()) #將 querySet 轉為 list；物件變成陣列字典
+    return JsonResponse(list_dic_data, safe=False) # 與允許dict
 
-def API_post(request, id):
+def API_Temperature_detail(request, id):
     try:
         obj= temperature.objects.get(myid=id)
         # print(model_to_dict(obj))
-        list_data= model_to_dict(obj) # object 打包成 python字典 (key, value) 之後才能繼續打包Jsone純文字格式
-        return JsonResponse(list_data) #預設safe= False
+        list_dic_data= model_to_dict(obj) # object 打包成 陣列字典 (key, value) 之後才能繼續打包Jsone純文字格式當作API回傳
+        return JsonResponse(list_dic_data) #預設safe= False
     except:
         # return HttpResponse("False")
         return JsonResponse({"message": "data not found"}, status=404)

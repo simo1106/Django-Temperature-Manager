@@ -27,7 +27,7 @@ urlpatterns = [
 
     # WEB API
     path('API_Temperature/', views.API_Temperature, name='API_Temperature'),
-    path('API_post/<int:id>/', views.API_post, name='API_post'),
+    path('API_Temperature_detail/<int:id>/', views.API_Temperature_detail, name='API_Temperature_detail'),
     path('updateList/<int:id>/', views.updateList, name='updateList'),
     # path('createItem/', views.createItem, name='createItem'),   
 
