@@ -106,4 +106,30 @@ def updateList(request):
     except Exception as e:
         return JsonResponse({"error": str(e)}, status=500)
     
+def setData(request):
+    if request.method == "GET":
+        data= request.GET['data']
+        print(f"Received GET data: data={data}")
+    elif request.method == "POST":
+        data= request.POST['data']
+        print(f"Received POST data: data={data}")
+    
+    return JsonResponse({"data": data}, status=201)
+
+# 顯示即時溫溼度資訊, 以API的方式回傳Json格式 (一筆字典, 因為只顯示最新的一筆資料)
+def show_temp(request):
+    result= Temperature.objects.all().order_by('-myid')[0:1] # 
+    data= model_to_dict(result[0]) # 將物件轉為字典
+    print(data)
+    return JsonResponse(data) 
+# 顯示即時溫溼度資訊, 以API的方式回傳Json格式 (字典列表, 有多筆資料, 但這裡只顯示最新的一筆資料)
+def show_temp_List(request):
+    result= Temperature.objects.all().order_by('-myid')[0:1] # 只顯示最新的一筆資料, -myid表示降冪排序
+    resultList= list(result.values())
+    return JsonResponse(resultList, safe=False)
+# 顯示即時溫溼度資訊, 以API的方式回傳Json格式, 並在網頁上顯示
+def show_temp_API(request):
+    return render(request, 'show_temp_API.html')
+    
+    
     
